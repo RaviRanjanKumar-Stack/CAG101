@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voucher Anomaly Analysis Results</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'detector/style.css' %}?v=2">
+</head>
+<body>
+    <main class="container">
+        <h1>Voucher Anomaly Analysis Results</h1>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if analysis_message %}
+            <p>{{ analysis_message }}</p>
+        {% endif %}
+
+        {% if row_count != None %}
+            <h2>Dataset Summary</h2>
+            <p>Total transactions: {{ row_count }}</p>
+            <p>Total columns: {{ column_count }}</p>
+        {% endif %}
+
+        {% if anomaly_records %}
+            <h2>Transaction Anomaly Scores</h2>
+            <p>Higher anomaly scores indicate transactions that the algorithm considers more unusual.</p>
+
+            <div class="table-container">
+                <table class="results-table">
+            
+                    <thead>
+                        <tr>
+                            {% for column in output_columns %}
+                                <th>{{ column }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in anomaly_records %}
+                            <tr>
+                                {% for value in record.values %}
+                                    <td>{{ value|default_if_none:"—" }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>No anomaly results were passed to this page.</p>
+        {% endif %}
+
+        <p>
+            <a href="{% url 'upload_csv' %}">Upload another CSV</a>
+        </p>
+    </main>
+</body>
+</html>
